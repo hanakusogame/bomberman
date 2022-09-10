@@ -1,4 +1,4 @@
-import { E, Font, PointMoveEvent, PointUpEvent } from "@akashic/akashic-engine";
+import { AssetManager, E, Font, PointMoveEvent, PointUpEvent } from "@akashic/akashic-engine";
 import { GameMainParameterObject, RPGAtsumaruWindow } from "./parameterObject";
 
 declare const window: RPGAtsumaruWindow;
@@ -7,7 +7,7 @@ export function main(param: GameMainParameterObject): void {
 	const scene = new g.Scene({
 		game: g.game,
 		// このシーンで利用するアセットのIDを列挙し、シーンに通知します
-		// assetIds: ["player", "shot", "se"],
+		assetIds: ["floor"],
 	});
 
 	// 放送者を区別する
@@ -107,16 +107,16 @@ export function main(param: GameMainParameterObject): void {
 		const mapBase = new g.E({
 			scene: scene,
 			x: g.game.width / 2,
-			y: g.game.height / 2,
+			y: g.game.height / 2 + 200,
 			width: 0,
 			height: 0,
 			anchorX: 0,
 			anchorY: 0,
-			scaleY: 0.2,
+			scaleX: 10.0,
 			parent: gameBase,
 		});
 
-		const floor = new g.FilledRect({
+		const floor = new g.Sprite({
 			scene: scene,
 			x: 0,
 			y: 0,
@@ -124,8 +124,8 @@ export function main(param: GameMainParameterObject): void {
 			height: 1000,
 			anchorX: 0.5,
 			anchorY: 0.5,
-			angle: 20,
-			cssColor: "yellow",
+			angle: 0,
+			src: scene.asset.getImageById("floor"),
 			parent: mapBase,
 		});
 
@@ -215,30 +215,30 @@ export function main(param: GameMainParameterObject): void {
 
 					// 移動速度を設定
 					if (ev.key == "ArrowUp") {
-						player.moveY = -5;
+						player.speed = -10;
 					}
 					if (ev.key == "ArrowDown") {
-						player.moveY = 5;
+						player.speed = 10;
 					}
 					if (ev.key == "ArrowRight") {
-						player.moveX = 5;
+						player.rotate = 2;
 					}
 					if (ev.key == "ArrowLeft") {
-						player.moveX = -5;
+						player.rotate = -2;
 					}
 				} else {
 					// 移動速度を0にする
 					if (ev.key == "ArrowUp") {
-						player.moveY = 0;
+						player.speed = 0;
 					}
 					if (ev.key == "ArrowDown") {
-						player.moveY = 0;
+						player.speed = 0;
 					}
 					if (ev.key == "ArrowRight") {
-						player.moveX = 0;
+						player.rotate = 0;
 					}
 					if (ev.key == "ArrowLeft") {
-						player.moveX = 0;
+						player.rotate = 0;
 					}
 				}
 			}
@@ -253,7 +253,7 @@ export function main(param: GameMainParameterObject): void {
 
 			for (const key in players) {
 				const player = players[key];
-				player.move();
+				player.move(key);
 			}
 		});
 	});
@@ -262,35 +262,50 @@ export function main(param: GameMainParameterObject): void {
 
 //プレイヤークラス
 class Player {
-	public moveX = 0;
-	public moveY = 0;
+	public speed = 0;
+	public rotate = 0;//回転速度
+	public angle = 0;//角度
 
-	constructor(private rectFloor: g.FilledRect, private rectMain: g.E) {}
+	constructor(private rectFloor: g.Sprite, private rectMain: g.E) {
+		this.base.x = rectFloor.width / 2;
+		this.base.y = rectFloor.height / 2;
+	}
 
 	public base = new g.FilledRect({
 		scene: g.game.scene(),
-		width: 50,
-		height: 50,
+		width: 30,
+		height: 30,
 		anchorX: 0.5,
 		anchorY: 0.5,
 		cssColor: "black",
+		opacity:0.2,
 		parent: this.rectFloor,
 	});
 
 	public unit = new g.FilledRect({
 		scene: g.game.scene(),
-		width: 50,
-		height: 120,
+		width: 200,
+		height: 300,
 		anchorX: 0.5,
 		anchorY: 1.0,
-		cssColor: "red",
+		cssColor: "blue",
 		parent: this.rectMain,
 	});
 
-	public move() {
-		this.base.x += this.moveX;
-		this.base.y += this.moveY;
+	public move(key: string) {
+		this.angle += this.rotate;
+		const moveX = this.speed * Math.cos(this.angle * (Math.PI / 180));
+		const moveY = this.speed * Math.sin(this.angle * (Math.PI / 180));
+		this.base.x += moveX;
+		this.base.y += moveY;
 		this.base.modified();
+
+		if (key == g.game.selfId) {
+			this.rectFloor.anchorX += moveX / this.rectFloor.width;
+			this.rectFloor.anchorY += moveY / this.rectFloor.height;
+			this.rectFloor.angle = -this.angle + 90;
+			this.rectFloor.modified();
+		}
 
 		const gp = this.rectFloor.localToGlobal(this.base);
 		this.unit.x = gp.x;
@@ -298,8 +313,3 @@ class Player {
 		this.unit.modified();
 	}
 }
-
-// class Player extends g.FilledRect {
-// 	public moveX = 0;
-// 	public moveY = 0;
-// }

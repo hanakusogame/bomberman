@@ -36,13 +36,21 @@
 			"type": "script",
 			"path": "script/parameterObject.js",
 			"global": true
+		},
+		"floor": {
+			"type": "image",
+			"path": "image/floor.png",
+			"width": 2000,
+			"height": 2000
 		}
 	},
 	"moduleMainScripts": {},
 	"environment": {
 		"sandbox-runtime": "3",
 		"niconico": {
-			"supportedModes": ["multi_admission"],
+			"supportedModes": [
+				"multi_admission"
+			],
 			"preferredSessionParameters": {
 				"totalTimeLimit": 7
 			}
