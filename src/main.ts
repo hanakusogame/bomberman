@@ -36,7 +36,7 @@ export function main(param: GameMainParameterObject): void {
 		const label = new g.Label({
 			scene: scene,
 			font: font,
-			text: "Hello World!",
+			text: "現状キーボードのみ　↑前進　↓後退　←→回転",
 			fontSize: 50,
 			textColor: "black",
 			parent: scene,
@@ -166,8 +166,8 @@ export function main(param: GameMainParameterObject): void {
 			//キーボードイベント
 			document.addEventListener("keydown", (ev) => {
 				ev.preventDefault();
-				label.text = ev.key;
-				label.invalidate();
+				//label.text = ev.key;
+				//label.invalidate();
 
 				g.game.raiseEvent(new g.MessageEvent({ isPush: true, key: ev.key, pId: e.player.id }));
 			});
@@ -263,8 +263,8 @@ export function main(param: GameMainParameterObject): void {
 //プレイヤークラス
 class Player {
 	public speed = 0;
-	public rotate = 0;//回転速度
-	public angle = 0;//角度
+	public rotate = 0; //回転速度
+	public angle = 0; //角度
 
 	constructor(private rectFloor: g.Sprite, private rectMain: g.E) {
 		this.base.x = rectFloor.width / 2;
@@ -278,7 +278,7 @@ class Player {
 		anchorX: 0.5,
 		anchorY: 0.5,
 		cssColor: "black",
-		opacity:0.2,
+		opacity: 0.2,
 		parent: this.rectFloor,
 	});
 
