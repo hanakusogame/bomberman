@@ -7,7 +7,7 @@ export function main(param: GameMainParameterObject): void {
 	const scene = new g.Scene({
 		game: g.game,
 		// このシーンで利用するアセットのIDを列挙し、シーンに通知します
-		assetIds: ["floor", "kaeru", "title"],
+		assetIds: ["floor","kaeru"],
 	});
 
 	// 放送者を区別する
@@ -29,12 +29,11 @@ export function main(param: GameMainParameterObject): void {
 			parent: scene,
 		});
 
-		const title = new g.Sprite({
+		const title = new g.FilledRect({
 			scene: scene,
-			x: 123,
-			width: 1034,
-			height: 720,
-			src: scene.asset.getImageById("title"),
+			width: g.game.width,
+			height: g.game.height,
+			cssColor: "white",
 			parent: scene,
 		});
 
@@ -47,22 +46,10 @@ export function main(param: GameMainParameterObject): void {
 		const label = new g.Label({
 			scene: scene,
 			font: font,
-			text: "現状キーボードのみ　↑:前進　↓:後退　←→:回転　A:色変更",
-			fontSize: 30,
-			textColor: "yellow",
+			text: "現状キーボードのみ　↑前進　↓後退　←→回転",
+			fontSize: 50,
+			textColor: "black",
 			parent: scene,
-			local: true,
-		});
-
-		new g.Label({
-			scene: scene,
-			x:40,
-			y:180,
-			font: font,
-			text: "カエルトゥーン",
-			fontSize: 80,
-			textColor: "white",
-			parent: title,
 			local: true,
 		});
 
@@ -71,11 +58,11 @@ export function main(param: GameMainParameterObject): void {
 		// 参加ボタン
 		const button = new g.FilledRect({
 			scene: scene,
-			x: 100,
-			y: 400,
+			x: (g.game.width - 200) / 2,
+			y: (g.game.height - 80) / 2,
 			width: 200,
 			height: 80,
-			cssColor: "white",
+			cssColor: "yellow",
 			parent: title,
 			touchable: true,
 			local: true,
@@ -97,11 +84,11 @@ export function main(param: GameMainParameterObject): void {
 		// 開始ボタン
 		const buttonStart = new g.FilledRect({
 			scene: scene,
-			x: 350,
-			y: 400,
+			x: (g.game.width - 200) / 2 + 300,
+			y: (g.game.height - 80) / 2,
 			width: 200,
 			height: 80,
-			cssColor: "white",
+			cssColor: "yellow",
 			parent: title,
 			touchable: true,
 			local: true,
@@ -149,7 +136,7 @@ export function main(param: GameMainParameterObject): void {
 			anchorX: 0.5,
 			anchorY: 0.5,
 			angle: 0,
-			cssColor: "gray",
+			cssColor:"gray",
 			parent: mapBase,
 		});
 
@@ -190,7 +177,7 @@ export function main(param: GameMainParameterObject): void {
 			width: 200,
 			text: "0人",
 			fontSize: 50,
-			textColor: "white",
+			textColor: "black",
 			textAlign: "center",
 			widthAutoAdjust: false,
 			parent: button,
@@ -254,10 +241,10 @@ export function main(param: GameMainParameterObject): void {
 				if (ev.isPush) {
 					// 移動速度を設定
 					if (ev.key == "ArrowUp") {
-						player.speed = 10;
+						player.speed = -10;
 					}
 					if (ev.key == "ArrowDown") {
-						player.speed = -10;
+						player.speed = 10;
 					}
 					if (ev.key == "ArrowRight") {
 						player.rotate = 2;
@@ -335,20 +322,14 @@ class Player {
 		width: 187.5,
 		height: 250,
 		anchorX: 0.5,
-		anchorY: 0.85,
-		scaleX: 1.3,
-		scaleY: 1.3,
-		src: g.game.scene().asset.getImageById("kaeru"),
-		frames: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+		anchorY: 1.0,
+		src:g.game.scene().asset.getImageById("kaeru"),
+		frames:[0,1,2,3,4,5,6,7,8],
 		parent: this.rectMain,
 	});
 
 	public move(key: string, maps: g.FilledRect[][]) {
-		if (this.speed >= 0) {
-			this.angle += this.rotate;
-		} else {
-			this.angle -= this.rotate;
-		}
+		this.angle += this.rotate;
 		const moveX = this.speed * Math.cos(this.angle * (Math.PI / 180));
 		const moveY = this.speed * Math.sin(this.angle * (Math.PI / 180));
 		this.base.x += moveX;
@@ -360,27 +341,8 @@ class Player {
 		if (key == g.game.selfId) {
 			this.rectFloor.anchorX = this.base.x / this.rectFloor.width;
 			this.rectFloor.anchorY = this.base.y / this.rectFloor.height;
-			this.rectFloor.angle = -this.angle - 90;
+			this.rectFloor.angle = -this.angle + 90;
 			this.rectFloor.modified();
-
-			if (this.speed > 0) {
-				if (this.rotate == 0) {
-					this.unit.frameNumber = 4;
-				} else if (this.rotate > 0) {
-					this.unit.frameNumber = 5;
-				} else if (this.rotate < 0) {
-					this.unit.frameNumber = 3;
-				}
-			} else if (this.speed < 0) {
-				if (this.rotate == 0) {
-					this.unit.frameNumber = 0;
-				} else if (this.rotate > 0) {
-					this.unit.frameNumber = 7;
-				} else if (this.rotate < 0) {
-					this.unit.frameNumber = 1;
-				}
-			}
-			this.unit.modified();
 		}
 
 		const gp = this.rectFloor.localToGlobal(this.base);

@@ -42,6 +42,18 @@
 			"path": "image/floor.png",
 			"width": 2000,
 			"height": 2000
+		},
+		"kaeru": {
+			"type": "image",
+			"path": "image/kaeru.png",
+			"width": 1500,
+			"height": 250
+		},
+		"title": {
+			"type": "image",
+			"path": "image/title.png",
+			"width": 1034,
+			"height": 720
 		}
 	},
 	"moduleMainScripts": {},
