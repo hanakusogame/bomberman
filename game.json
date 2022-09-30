@@ -4,18 +4,6 @@
 	"fps": 30,
 	"main": "./script/_bootstrap.js",
 	"assets": {
-		"player": {
-			"type": "image",
-			"width": 32,
-			"height": 32,
-			"path": "image/player.png"
-		},
-		"shot": {
-			"type": "image",
-			"width": 16,
-			"height": 16,
-			"path": "image/shot.png"
-		},
 		"se": {
 			"type": "audio",
 			"path": "audio/se",
@@ -37,12 +25,6 @@
 			"path": "script/parameterObject.js",
 			"global": true
 		},
-		"floor": {
-			"type": "image",
-			"path": "image/floor.png",
-			"width": 2000,
-			"height": 2000
-		},
 		"kaeru": {
 			"type": "image",
 			"path": "image/kaeru.png",
@@ -54,9 +36,50 @@
 			"path": "image/title.png",
 			"width": 1034,
 			"height": 720
+		},
+		"Player": {
+			"type": "script",
+			"path": "script/Player.js",
+			"global": true
+		},
+		"Title": {
+			"type": "script",
+			"path": "script/Title.js",
+			"global": true
+		},
+		"MainGame": {
+			"type": "script",
+			"path": "script/MainGame.js",
+			"global": true
+		},
+		"number": {
+			"type": "image",
+			"path": "image/number.png",
+			"width": 728,
+			"height": 128
+		},
+		"start": {
+			"type": "image",
+			"path": "image/start.png",
+			"width": 800,
+			"height": 500
+		},
+		"time": {
+			"type": "image",
+			"path": "image/time.png",
+			"width": 76,
+			"height": 76
+		},
+		"glyph": {
+			"type": "text",
+			"path": "text/glyph.json"
 		}
 	},
-	"moduleMainScripts": {},
+	"moduleMainScripts": {
+		"@akashic-extension/akashic-timeline": "node_modules/@akashic-extension/akashic-timeline/lib/index.js",
+		"@akashic-extension/akashic-hover-plugin": "node_modules/@akashic-extension/akashic-hover-plugin/lib/index.js",
+		"@akashic-extension/resolve-player-info": "node_modules/@akashic-extension/resolve-player-info/lib/index.js"
+	},
 	"environment": {
 		"sandbox-runtime": "3",
 		"niconico": {
@@ -66,6 +89,22 @@
 			"preferredSessionParameters": {
 				"totalTimeLimit": 7
 			}
+		},
+		"external": {
+			"coeLimited": "0",
+			"atsumaru": "0"
 		}
-	}
+	},
+	"globalScripts": [
+		"node_modules/@akashic-extension/akashic-timeline/lib/ActionType.js",
+		"node_modules/@akashic-extension/akashic-timeline/lib/Easing.js",
+		"node_modules/@akashic-extension/akashic-timeline/lib/Timeline.js",
+		"node_modules/@akashic-extension/akashic-timeline/lib/Tween.js",
+		"node_modules/@akashic-extension/akashic-timeline/lib/index.js",
+		"node_modules/@akashic-extension/akashic-hover-plugin/lib/Converter.js",
+		"node_modules/@akashic-extension/akashic-hover-plugin/lib/HoverPlugin.js",
+		"node_modules/@akashic-extension/akashic-hover-plugin/lib/index.js",
+		"node_modules/@akashic-extension/resolve-player-info/lib/FallbackDialog.js",
+		"node_modules/@akashic-extension/resolve-player-info/lib/index.js"
+	]
 }

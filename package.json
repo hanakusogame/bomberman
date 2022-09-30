@@ -31,5 +31,9 @@
     "rimraf": "3.0.2",
     "ts-jest": "28.0.7",
     "typescript": "4.7.4"
+  },
+  "dependencies": {
+    "@akashic-extension/akashic-timeline": "^3.2.0",
+    "@akashic-extension/resolve-player-info": "^1.1.1"
   }
 }
