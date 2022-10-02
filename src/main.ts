@@ -11,7 +11,7 @@ export function main(param: GameMainParameterObject): void {
 	const scene = new g.Scene({
 		game: g.game,
 		// このシーンで利用するアセットのIDを列挙し、シーンに通知します
-		assetIds: ["kaeru", "title","start","time","number","glyph"],
+		assetIds: ["kaeru", "title","start","time","number","glyph","bgm","se_move","se_start","se_timeup"],
 	});
 
 	// 放送者を区別する
@@ -42,6 +42,9 @@ export function main(param: GameMainParameterObject): void {
 			scene.append(mainGame);
 			mainGame.init(playerIds);
 		};
+
+		const bgm = scene.asset.getAudioById("bgm").play();
+		bgm.changeVolume(0.2);
 	});
 	g.game.pushScene(scene);
 }

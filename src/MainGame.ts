@@ -99,7 +99,7 @@ export class MainGame extends g.E {
 			parent: this,
 		});
 
-		let timeLimit = 20;
+		let timeLimit = 90;
 		const labelTime = new g.Label({
 			scene: scene,
 			x: 600,
@@ -295,9 +295,14 @@ export class MainGame extends g.E {
 					const mx = Math.floor(player.base.x / 100);
 					const my = Math.floor(player.base.y / 100);
 					const map = maps[my][mx];
-					map.cssColor = this.colors[player.numColor];
-					map.modified();
-					map.tag = player.numColor;
+					if (map.tag != player.numColor) {
+						map.cssColor = this.colors[player.numColor];
+						map.modified();
+						map.tag = player.numColor;
+						if (g.game.selfId == key) {
+							scene.asset.getAudioById("se_move").play().changeVolume(0.2);
+						}
+					}
 				}
 			}
 
@@ -381,10 +386,12 @@ export class MainGame extends g.E {
 			sprStart.frameNumber = 1;
 			sprStart.modified();
 
+			scene.asset.getAudioById("se_timeup").play();
+
 			scene.setTimeout(() => {
 				startBase.hide();
 				scene.append(floor);
-				const s = (g.game.height -100) / floor.height;
+				const s = (g.game.height - 100) / floor.height;
 				floor.scale(s);
 				floor.x = 300;
 				floor.y = 50;
@@ -408,6 +415,8 @@ export class MainGame extends g.E {
 			}
 
 			move();
+
+			scene.asset.getAudioById("se_start").play();
 
 			scene.setTimeout(() => {
 				startBase.remove();
