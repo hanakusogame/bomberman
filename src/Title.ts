@@ -8,6 +8,8 @@ export class Title extends g.E {
 	constructor() {
 		const scene = g.game.scene();
 
+		
+
 		super({
 			scene: scene,
 			parent: scene,
@@ -33,7 +35,7 @@ export class Title extends g.E {
 		const label = new g.Label({
 			scene: scene,
 			font: font,
-			text: "キーボード　↑:前進　↓:後退　←→:回転　A:色変更",
+			text: "キーボード　↑:前進　↓:後退　←→:回転",
 			fontSize: 30,
 			textColor: "yellow",
 			parent: this,

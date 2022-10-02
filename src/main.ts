@@ -3,7 +3,7 @@ import { GameMainParameterObject, RPGAtsumaruWindow } from "./parameterObject";
 import { Player } from "./Player";
 import { Title } from "./Title";
 import { MainGame } from "./MainGame";
-
+import tl = require("@akashic-extension/akashic-timeline");
 
 declare const window: RPGAtsumaruWindow;
 
@@ -23,6 +23,7 @@ export function main(param: GameMainParameterObject): void {
 	// 市場コンテンツのランキングモードでは、g.game.vars.gameState.score の値をスコアとして扱います
 	g.game.vars.gameState = { score: 0 };
 	scene.onLoad.add(() => {
+
 		// 背景
 		const bg = new g.FilledRect({
 			scene: scene,

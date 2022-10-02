@@ -1,6 +1,7 @@
 import { Player } from "./Player";
 import tl = require("@akashic-extension/akashic-timeline");
 
+//ゲームのメイン
 export class MainGame extends g.E {
 	public init: (playerIds: g.Player[]) => void = (pid) => {};
 	private colors = ["#ff5050", "green", "yellow", "blue"];
@@ -98,7 +99,7 @@ export class MainGame extends g.E {
 			parent: this,
 		});
 
-		let timeLimit = 90;
+		let timeLimit = 20;
 		const labelTime = new g.Label({
 			scene: scene,
 			x: 600,
@@ -110,24 +111,49 @@ export class MainGame extends g.E {
 
 		//マップの色ごとの数表示用
 		const numColor = 4;
+		const rankBases: g.E[] = [];
 		const labelColors: g.Label[] = [];
+		const rectRanks: g.FilledRect[] = [];
 		for (let i = 0; i < numColor; i++) {
-			const rect = new g.FilledRect({
+			const rankBase = new g.E({
 				scene: scene,
-				x: 1000,
+				x: 1100,
 				y: 150 * i + 50,
 				width: 80,
+				height: 80,
+				parent: this,
+			});
+			rankBases.push(rankBase);
+
+			new g.Label({
+				scene: scene,
+				x: -50,
+				y: 10,
+				font: fontNum,
+				text: "" + (i + 1),
+				parent: rankBase,
+			});
+
+			const rect = new g.FilledRect({
+				scene: scene,
+				x: 1100,
+				y: 150 * i + 50,
+				width: 170,
 				height: 80,
 				cssColor: this.colors[i],
 				parent: this,
 			});
+			rectRanks.push(rect);
 
 			labelColors.push(
 				new g.Label({
 					scene: scene,
-					x: 90,
+					x: 0,
 					y: 10,
+					width: 170,
 					font: fontNum,
+					textAlign: "right",
+					widthAutoAdjust: false,
 					text: "0",
 					parent: rect,
 				})
@@ -136,30 +162,30 @@ export class MainGame extends g.E {
 
 		//スタート表示用
 		const startBase = new g.E({
-			scene:scene,
-			parent:this,
-		})
+			scene: scene,
+			parent: this,
+		});
 
 		const rectStart = new g.FilledRect({
-			scene:scene,
-			width:g.game.width,
-			height:g.game.height,
-			cssColor:"black",
-			opacity:0.5,
-			parent:startBase
-		})
+			scene: scene,
+			width: g.game.width,
+			height: g.game.height,
+			cssColor: "black",
+			opacity: 0.5,
+			parent: startBase,
+		});
 
 		const sprStart = new g.FrameSprite({
-			scene:scene,
-			src:scene.asset.getImageById("start"),
-			x:(g.game.width-800)/2,
-			y:(g.game.height-250)/2,
-			width:800,
-			height:250,
-			frameNumber:0,
-			frames:[0,1],
-			parent:startBase
-		})
+			scene: scene,
+			src: scene.asset.getImageById("start"),
+			x: (g.game.width - 800) / 2,
+			y: (g.game.height - 250) / 2,
+			width: 800,
+			height: 250,
+			frameNumber: 0,
+			frames: [0, 1],
+			parent: startBase,
+		});
 
 		// デバッグ用文字列
 		const debugText = new g.Label({
@@ -170,6 +196,8 @@ export class MainGame extends g.E {
 			textColor: "red",
 			parent: this,
 		});
+
+		const timeline = new tl.Timeline(scene);
 
 		floor.onUpdate.add(() => {
 			// floor.angle += 0.3;
@@ -306,15 +334,14 @@ export class MainGame extends g.E {
 		};
 
 		this.onUpdate.add(() => {
-
-			if(gameState != "play") return; 
+			if (gameState != "play") return;
 
 			//残り時間を更新
 			timeLimit -= 1 / 30;
 			labelTime.text = "" + Math.max(0, Math.floor(timeLimit));
 			labelTime.invalidate();
 			if (0 >= Math.ceil(timeLimit)) {
-				gameState = "finish";
+				finish();
 			}
 
 			move();
@@ -328,11 +355,49 @@ export class MainGame extends g.E {
 					}
 				}
 			}
+
+			//表示
 			for (let i = 0; i < numColor; i++) {
 				labelColors[i].text = "" + colorCnt[i];
 				labelColors[i].invalidate();
 			}
+
+			//並べ替え
+			let index = [0, 1, 2, 3];
+			index.sort((a, b) => colorCnt[b] - colorCnt[a]);
+			for (let i = 0; i < index.length; i++) {
+				const x = rankBases[index[i]].x;
+				const y = rankBases[index[i]].y;
+				rectRanks[i].x = x;
+				rectRanks[i].y = y;
+				rectRanks[i].modified();
+			}
 		});
+
+		//終了処理
+		const finish = () => {
+			gameState = "finish";
+			scene.append(startBase);
+			sprStart.frameNumber = 1;
+			sprStart.modified();
+
+			scene.setTimeout(() => {
+				startBase.hide();
+				scene.append(floor);
+				const s = (g.game.height -100) / floor.height;
+				floor.scale(s);
+				floor.x = 300;
+				floor.y = 50;
+				floor.anchorX = 0;
+				floor.anchorY = 0;
+				floor.angle = 0;
+				floor.modified();
+				for (let key in players) {
+					const p = players[key];
+					p.unit.hide();
+				}
+			}, 3000);
+		};
 
 		//初期化
 		this.init = (playerIds) => {
@@ -347,7 +412,7 @@ export class MainGame extends g.E {
 			scene.setTimeout(() => {
 				startBase.remove();
 				gameState = "play";
-			}, 3000);
+			}, 2000);
 		};
 	}
 }
